@@ -4,7 +4,7 @@ from flask.ext.bootstrap import Bootstrap
 
 app = Flask(__name__)
 app.config.from_object('config.default')
-#app.config.from_pyfile('config.py') # 从instance文件夹中加载配置
+app.config.from_pyfile('instance/config.py')
 #app.config.from_envvar('APP_CONFIG_FILE')
 bootstrap = Bootstrap(app)
 
