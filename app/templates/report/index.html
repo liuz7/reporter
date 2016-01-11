@@ -3,7 +3,12 @@
 {% block title %}首页{% endblock %}
 
 {% block page_content %}
-<h1>这里是report首页，Hello World！</h1>
+<h1>Report首页</h1>
 
+<div class="list-group">
+{% for report in report_list %}
+    <a href="{{ url_for('static', filename=report) }}" class="list-group-item">{{report}}</a>
+{% endfor %}
+</div>
 
 {% endblock %}
