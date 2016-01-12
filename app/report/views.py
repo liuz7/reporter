@@ -1,6 +1,6 @@
 #coding:utf-8
 from flask import Blueprint, render_template, current_app, request, make_response
-import os
+import os, subprocess
 
 report = Blueprint('report', __name__, url_prefix='/report')
 
@@ -38,10 +38,19 @@ def show():
         response.mimetype = "text/plain;charset=utf-8"
     return response
 
-@report.route('/run/')
+@report.route('/run/', methods=['POST'])
 def run():
-    # show the user profile for that user
-    return 'run'
+    app = request.form['app']
+    script_path = current_app.config['PPE_SCRIPT_PATH']
+    if os.path.isfile(script_path) or app is None:
+        try:
+            output = subprocess.check_output("python " + script_path + " " + app, close_fds=True, shell=True)
+        except subprocess.CalledProcessError as e:
+            output = e.output
+        result = "this is ppe: %s, %s \n%s" % (app,script_path,output)
+    else:
+        result = "no file of %s" % (script_path)
+    return render_template('report/result.html', result = result)
 
 def step((ext, file_list), dirname, names):
     ext = ext.lower()
