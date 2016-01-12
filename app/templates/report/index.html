@@ -1,14 +1,28 @@
 {% extends "base.html" %}
 
-{% block title %}首页{% endblock %}
+{% block title %}Report首页{% endblock %}
 
 {% block page_content %}
 <h1>Report首页</h1>
 
-<div class="list-group">
+<ul class="list-group">
 {% for report in report_list %}
-    <a href="{{ url_for('static', filename=report) }}" class="list-group-item">{{report}}</a>
+    <li class="list-group-item">
+        <li class="list-group-item list-group-item-info">{{ report }}</li>
+        <a class="btn btn-default btn-link" href="{{ url_for('report.show', name=report + '/report.html') }}" role="button">Report</a>
+        <a class="btn btn-default btn-link" href="{{ url_for('report.show', name=report + '/log.html') }}" role="button">Log</a>
+        <a class="btn btn-default btn-primary" href="{{ url_for('report.run', app=report) }}" role="button">Run</a>
+    </li>
 {% endfor %}
-</div>
+</ul>
 
+<ul class="list-group">
+{% for debug in debug_report_list %}
+    <li class="list-group-item">
+        <li class="list-group-item list-group-item-info">{{ debug }}</li>
+        <a class="btn btn-default btn-link" href="{{ url_for('report.show', name=debug) }}" role="button">Debug</a>
+        <a class="btn btn-default btn-primary" href="{{ url_for('report.run', app=report) }}" role="button">Run</a>
+    </li>
+{% endfor %}
+</ul>
 {% endblock %}
