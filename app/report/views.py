@@ -1,7 +1,8 @@
 #coding:utf-8
-from flask import Blueprint, render_template, current_app, request, make_response
-import os, subprocess
+from flask import Blueprint, render_template, current_app, request, make_response, Response
+import os
 from RunForm import *
+from shelljob import proc
 
 report = Blueprint('report', __name__, url_prefix='/report')
 
@@ -47,11 +48,14 @@ def run():
         app = form.app.data
         script_path = current_app.config['PPE_SCRIPT_PATH']
         if os.path.isfile(script_path):
-            try:
-                output = subprocess.check_output("python " + script_path + " " + app, close_fds=True, shell=True)
-            except subprocess.CalledProcessError as e:
-                output = e.output
-            result = "this is ppe: %s, %s \n%s" % (app,script_path,output)
+            g = proc.Group()
+            p = g.run( [ "python", "-u", script_path, app ] )
+            def read_process():
+                while g.is_pending():
+                    lines = g.readlines()
+                    for proc, line in lines:
+                        yield line
+            return Response( read_process(), mimetype= 'text/plain' )
         else:
             result = "no file of %s" % (script_path)
     else:
