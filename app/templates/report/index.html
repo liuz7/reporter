@@ -12,7 +12,8 @@
                 <div class="form-group">
                     <label class="sr-only" for="app">Run app on the server</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" id="app" placeholder="The test group to run" name="app">
+                        {{ form.hidden_tag() }}
+                        {{ form.app(size=20, class_="form-control", placeholder="The test group to run") }}
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Run</button>

@@ -1,11 +1,13 @@
 #coding:utf-8
 from flask import Blueprint, render_template, current_app, request, make_response
 import os, subprocess
+from RunForm import *
 
 report = Blueprint('report', __name__, url_prefix='/report')
 
 @report.route('/')
 def index():
+    form = RunForm()
     report_dir = current_app.config['PPE_REPORT_PATH']
     file_list = []
     os.path.walk(report_dir, step, ('.html', file_list))
@@ -22,7 +24,7 @@ def index():
         debug_report_list.append(debug_file_path[len(report_dir):])
     debug_report_list = list(set(debug_report_list))
 
-    return render_template('report/index.html', report_list = report_list, debug_report_list = debug_report_list)
+    return render_template('report/index.html', report_list = report_list, debug_report_list = debug_report_list, form = form)
 
 @report.route('/show/')
 def show():
@@ -40,16 +42,20 @@ def show():
 
 @report.route('/run/', methods=['POST'])
 def run():
-    app = request.form['app']
-    script_path = current_app.config['PPE_SCRIPT_PATH']
-    if os.path.isfile(script_path) or app is None:
-        try:
-            output = subprocess.check_output("python " + script_path + " " + app, close_fds=True, shell=True)
-        except subprocess.CalledProcessError as e:
-            output = e.output
-        result = "this is ppe: %s, %s \n%s" % (app,script_path,output)
+    form = RunForm()
+    if form.validate_on_submit():
+        app = form.app.data
+        script_path = current_app.config['PPE_SCRIPT_PATH']
+        if os.path.isfile(script_path):
+            try:
+                output = subprocess.check_output("python " + script_path + " " + app, close_fds=True, shell=True)
+            except subprocess.CalledProcessError as e:
+                output = e.output
+            result = "this is ppe: %s, %s \n%s" % (app,script_path,output)
+        else:
+            result = "no file of %s" % (script_path)
     else:
-        result = "no file of %s" % (script_path)
+        result = 'Form validation failed.'
     return render_template('report/result.html', result = result)
 
 def step((ext, file_list), dirname, names):
