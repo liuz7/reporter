@@ -1,36 +1,64 @@
 {% extends "base.html" %}
 
-{% block title %}Report首页{% endblock %}
+{% block title %}Report Portal{% endblock %}
 
 {% block page_content %}
-<h1>Report首页</h1>
+    <h1>Report Portal</h1>
 
-<form class="form-inline" method="POST" action="{{url_for('report.run')}}">
-  <div class="form-group">
-    <label class="sr-only" for="app">Run app on the server</label>
-    <div class="input-group">
-      <input type="text" class="form-control" id="app" placeholder="The app to run" name="app">
+    <div class="panel panel-default">
+        <div class="panel-heading">Run Test Group</div>
+        <div class="panel-body">
+            <form class="form-inline" method="POST" action="{{ url_for('report.run') }}">
+                <div class="form-group">
+                    <label class="sr-only" for="app">Run app on the server</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="app" placeholder="The test group to run" name="app">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Run</button>
+            </form>
+        </div>
     </div>
-  </div>
-  <button type="submit" class="btn btn-primary">Run</button>
-</form>
 
-<ul class="list-group">
-{% for report in report_list %}
-    <li class="list-group-item">
-        <li class="list-group-item list-group-item-info">{{ report }}</li>
-        <a class="btn btn-default btn-link" href="{{ url_for('report.show', name=report + '/report.html') }}" role="button">Report</a>
-        <a class="btn btn-default btn-link" href="{{ url_for('report.show', name=report + '/log.html') }}" role="button">Log</a>
-    </li>
-{% endfor %}
-</ul>
 
-<ul class="list-group">
-{% for debug in debug_report_list %}
-    <li class="list-group-item">
-        <li class="list-group-item list-group-item-info">{{ debug }}</li>
-        <a class="btn btn-default btn-link" href="{{ url_for('report.show', name=debug) }}" role="button">Debug</a>
-    </li>
-{% endfor %}
-</ul>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">Html Reports</div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        {% for report in report_list %}
+                            <li class="list-group-item">
+                            <li class="list-group-item list-group-item-info">{{ report }}</li>
+                            <a class="btn btn-default btn-link"
+                               href="{{ url_for('report.show', name=report + '/report.html') }}"
+                               role="button">Report</a>
+                            <a class="btn btn-default btn-link"
+                               href="{{ url_for('report.show', name=report + '/log.html') }}"
+                               role="button">Log</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-sm-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">Debug Reports</div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        {% for debug in debug_report_list %}
+                            <li class="list-group-item">
+                            <li class="list-group-item list-group-item-info">{{ debug }}</li>
+                            <a class="btn btn-default btn-link" href="{{ url_for('report.show', name=debug) }}"
+                               role="button">Debug</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
