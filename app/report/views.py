@@ -55,7 +55,7 @@ def run():
         else:
             result = "no file of %s" % (script_path)
     else:
-        result = 'Form validation failed.'
+        result = form.app.errors
     return render_template('report/result.html', result = result)
 
 def step((ext, file_list), dirname, names):
