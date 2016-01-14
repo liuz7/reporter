@@ -1,5 +1,5 @@
 #coding:utf-8
-from flask import Blueprint, render_template, current_app, request, make_response, Response
+from flask import Blueprint, render_template, current_app, request, make_response, Response, redirect, abort
 import os
 from RunForm import *
 from shelljob import proc
@@ -29,8 +29,8 @@ def index():
 
 @report.route('/show/')
 def show():
-    report = request.args.get('name', '')
     report_dir = current_app.config['PPE_REPORT_PATH']
+    report = request.args.get('name', '')
     report_object = open(report_dir + report)
     try:
         content = report_object.read()
@@ -40,6 +40,13 @@ def show():
     if str(report).endswith('.debug'):
         response.mimetype = "text/plain;charset=utf-8"
     return response
+
+@report.route('/show/<log>')
+def show_log(log):
+    if str(log).startswith('log.html'):
+        return redirect(str(request.referrer).replace('report.html', 'log.html'))
+    else:
+        return abort(404)
 
 @report.route('/run/', methods=['POST'])
 def run():
