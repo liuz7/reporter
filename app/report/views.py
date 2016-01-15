@@ -1,5 +1,5 @@
 #coding:utf-8
-from flask import Blueprint, render_template, current_app, request, make_response, Response, redirect, abort
+from flask import Blueprint, render_template, current_app, request, make_response, redirect, abort
 import os
 from RunForm import *
 from task import start_command_task, emit_message
