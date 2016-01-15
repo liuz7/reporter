@@ -2,7 +2,7 @@
 from flask import Blueprint, render_template, current_app, request, make_response, Response, redirect, abort
 import os
 from RunForm import *
-from shelljob import proc
+from task import start_command_task
 
 report = Blueprint('report', __name__, url_prefix='/report')
 
@@ -55,14 +55,8 @@ def run():
         app = form.app.data
         script_path = current_app.config['PPE_SCRIPT_PATH']
         if os.path.isfile(script_path):
-            g = proc.Group()
-            p = g.run( [ "python", "-u", script_path, app ] )
-            def read_process():
-                while g.is_pending():
-                    lines = g.readlines()
-                    for proc, line in lines:
-                        yield line
-            return Response( read_process(), mimetype= 'text/plain' )
+            start_command_task([ "python", "-u", script_path, app ])
+            return Response("Done", mimetype= 'text/plain')
         else:
             result = "no file of %s" % (script_path)
     else:
@@ -74,3 +68,8 @@ def step((ext, file_list), dirname, names):
     for name in names:
         if name.lower().endswith(ext):
             file_list.append(os.path.join(dirname, name))
+
+@report.route('/start/')
+def start():
+    start_command_task([ "python", "-u", "/Users/liugeorge/workspace/reporter/app/report/slow.py" ])
+    return 'test'

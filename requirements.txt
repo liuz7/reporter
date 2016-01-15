@@ -2,4 +2,4 @@ flask==0.10.1
 flask-Bootstrap==3.3.5.7
 gunicorn==19.4.1
 Flask-WTF==0.12
-shelljob==0.4.4
+#shelljob==0.4.4
