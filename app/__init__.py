@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from flask.ext.bootstrap import Bootstrap
 import eventlet
+from flask.ext.socketio import SocketIO
 
 eventlet.monkey_patch()
 
@@ -10,7 +11,7 @@ app.config.from_object('config.default')
 app.config.from_pyfile('instance/config.py')
 #app.config.from_envvar('APP_CONFIG_FILE')
 bootstrap = Bootstrap(app)
-
+socketio = SocketIO(app)
 
 @app.errorhandler(404)
 def not_found(error):
