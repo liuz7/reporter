@@ -1,5 +1,8 @@
 from flask import Flask, render_template
 from flask.ext.bootstrap import Bootstrap
+import eventlet
+
+eventlet.monkey_patch()
 
 app = Flask(__name__)
 
