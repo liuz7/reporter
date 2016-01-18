@@ -10,21 +10,9 @@ report = Blueprint('report', __name__, url_prefix='/report')
 def index():
     form = RunForm()
     report_dir = current_app.config['PPE_REPORT_PATH']
-    file_list = []
-    os.path.walk(report_dir, step, ('.html', file_list))
-    report_list = []
-    for file_path in file_list:
-        file_path = os.path.dirname(file_path)
-        report_list.append(file_path[len(report_dir):])
-    report_list = list(set(report_list))
-
-    debug_file_list = []
-    os.path.walk(report_dir, step, ('.debug', debug_file_list))
-    debug_report_list = []
-    for debug_file_path in debug_file_list:
-        debug_report_list.append(debug_file_path[len(report_dir):])
-    debug_report_list = list(set(debug_report_list))
-
+    html_report_list = get_file_list_by_ext(report_dir, '.html')
+    report_list = list(set(map(lambda x: os.path.dirname(x), html_report_list)))
+    debug_report_list = get_file_list_by_ext(report_dir, '.debug')
     return render_template('report/index.html', report_list = report_list, debug_report_list = debug_report_list, form = form)
 
 @report.route('/show/')
@@ -70,9 +58,15 @@ def step((ext, file_list), dirname, names):
         if name.lower().endswith(ext):
             file_list.append(os.path.join(dirname, name))
 
-#@report.route('/start/')
-#def start():
-    #start_command_task([ "python", "-u", '/Users/liugeorge/workspace/reporter/app/report/slow.py' ])
-    #return render_template('report/output.html')
+def get_file_list_by_ext(top_dir, ext):
+    file_list = []
+    os.path.walk(top_dir, step, (ext, file_list))
+    result_list = list(set(map(lambda x: x[len(top_dir):], file_list)))
+    return result_list
+
+@report.route('/start/')
+def start():
+    start_command_task([ "python", "-u", '/Users/liugeorge/workspace/reporter/app/report/slow.py' ])
+    return render_template('report/output.html')
 
 
