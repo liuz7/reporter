@@ -1,7 +1,7 @@
 from threading import Thread
 import subprocess
 from app import socketio
-
+import time
 
 def start_command_task(command):
     thread = Thread(target=execute_command, args=[command])
@@ -15,6 +15,7 @@ def execute_command(command):
     except OSError:
         print 'OSErrer'
     else:
+        time.sleep(3)
         while True:
             line = p.stdout.readline()
             if not line:
