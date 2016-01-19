@@ -25,11 +25,15 @@ def show():
         full_report_path = report_dir + report
     else:
         full_report_path = os.path.join(report_dir, report)
-    report_object = open(full_report_path)
+    report_object = None
     try:
+        report_object = open(full_report_path)
         content = report_object.read()
+    except IOError as e:
+        return render_template('report/output.html', result = e)
     finally:
-        report_object.close()
+        if report_object is not None:
+            report_object.close()
     response = make_response(content)
     if str(report).endswith('.debug'):
         response.mimetype = "text/plain;charset=utf-8"
