@@ -29,8 +29,8 @@
                 <div class="form-group">
                     <label class="sr-only" for="app">Run app on the server</label>
                     <div class="input-group">
-                        {{ form.hidden_tag() }}
-                        {{ form.app(size=20, class_="form-control", placeholder="The test group to run") }}
+                        {{ run_form.hidden_tag() }}
+                        {{ run_form.app(size=20, class_="form-control", placeholder="The test group to run") }}
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Run</button>
@@ -38,14 +38,31 @@
         </div>
     </div>
 
-    <div class="input-group"><span class="input-group-addon">Report Filter</span>
-        <input id="filter" type="text" class="form-control" placeholder="Type report name here...">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="input-group"><span class="input-group-addon">Report Filter</span>
+                <input id="filter" type="text" class="form-control" placeholder="Type report name here...">
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <form class="form-inline" method="POST" action="{{ url_for('report.open_report') }}">
+                <div class="form-group">
+                    <label class="sr-only" for="path">Open report on the server</label>
+                    <div class="input-group"><span class="input-group-addon">Open Report</span>
+                        {{ open_form.hidden_tag() }}
+                        {{ open_form.path(size=50, class_="form-control", placeholder="The report path '/report-arts-it-index-tests/report.html'") }}
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-default">Open</button>
+            </form>
+        </div>
     </div>
+    <hr>
 
     <div class="row">
         <div class="col-sm-6">
             <div class="panel panel-default">
-                <div class="panel-heading">Html Reports</div>
+                <div class="panel-heading">Html Reports <span class="badge">{{ report_list|length }}</span></div>
                 <div class="panel-body">
                     <ul class="list-group searchable">
                         {% for report in report_list %}
@@ -71,7 +88,7 @@
 
         <div class="col-sm-6">
             <div class="panel panel-default">
-                <div class="panel-heading">Debug Reports</div>
+                <div class="panel-heading">Debug Reports <span class="badge">{{ debug_report_list|length }}</span></div>
                 <div class="panel-body">
                     <ul class="list-group searchable">
                         {% for debug in debug_report_list %}

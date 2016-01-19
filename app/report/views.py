@@ -1,25 +1,31 @@
 #coding:utf-8
-from flask import Blueprint, render_template, current_app, request, make_response, redirect, abort
+from flask import Blueprint, render_template, current_app, request, make_response, redirect, abort, url_for
 import os
 from RunForm import *
 from task import start_command_task, emit_message
+from OpenForm import *
 
 report = Blueprint('report', __name__, url_prefix='/report')
 
 @report.route('/')
 def index():
-    form = RunForm()
+    run_form = RunForm()
+    open_form = OpenForm()
     report_dir = current_app.config['PPE_REPORT_PATH']
     html_report_list = get_file_list_by_ext(report_dir, '.html')
     report_list = list(set(map(lambda x: os.path.dirname(x), html_report_list)))
     debug_report_list = get_file_list_by_ext(report_dir, '.debug')
-    return render_template('report/index.html', report_list = report_list, debug_report_list = debug_report_list, form = form)
+    return render_template('report/index.html', report_list = report_list, debug_report_list = debug_report_list, run_form = run_form, open_form = open_form)
 
 @report.route('/show/')
 def show():
     report_dir = current_app.config['PPE_REPORT_PATH']
     report = request.args.get('name', '')
-    report_object = open(report_dir + report)
+    if report.startswith(os.sep):
+        full_report_path = report_dir + report
+    else:
+        full_report_path = os.path.join(report_dir, report)
+    report_object = open(full_report_path)
     try:
         content = report_object.read()
     finally:
@@ -50,6 +56,24 @@ def run():
     else:
         result = form.app.errors
     emit_message(result)
+    return render_template('report/output.html', result = result)
+
+@report.route('/open/', methods=['POST'])
+def open_report():
+    form = OpenForm()
+    if form.validate_on_submit():
+        path = form.path.data
+        report_dir = current_app.config['PPE_REPORT_PATH']
+        if path.startswith(os.sep):
+            full_report_path = report_dir + path
+        else:
+            full_report_path = os.path.join(report_dir, path)
+        if os.path.isfile(full_report_path):
+            return redirect(url_for('report.show', name = path))
+        else:
+            result = "can not find %s" % (full_report_path)
+    else:
+        result = form.path.errors
     return render_template('report/output.html', result = result)
 
 def step((ext, file_list), dirname, names):
