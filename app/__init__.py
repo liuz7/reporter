@@ -5,6 +5,7 @@ from flask.ext.socketio import SocketIO
 from flask_restful import Api
 import logging
 from logging.handlers import RotatingFileHandler
+from flask.ext.compress import Compress
 
 eventlet.monkey_patch()
 
@@ -13,6 +14,7 @@ app.config.from_object('config.default')
 app.config.from_pyfile('instance/config.py', silent=True)
 #app.config.from_envvar('APP_CONFIG_FILE')
 
+Compress(app)
 bootstrap = Bootstrap(app)
 socketio = SocketIO(app)
 api = Api(app)
