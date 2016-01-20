@@ -3,17 +3,29 @@ from flask.ext.bootstrap import Bootstrap
 import eventlet
 from flask.ext.socketio import SocketIO
 from flask_restful import Api
+import logging
+from logging.handlers import RotatingFileHandler
 
 eventlet.monkey_patch()
 
 app = Flask(__name__)
 app.config.from_object('config.default')
-app.config.from_pyfile('instance/config.py')
+app.config.from_pyfile('instance/config.py', silent=True)
 #app.config.from_envvar('APP_CONFIG_FILE')
 
 bootstrap = Bootstrap(app)
 socketio = SocketIO(app)
 api = Api(app)
+
+handler = RotatingFileHandler(
+    app.config['LOGGING_LOCATION'],
+    maxBytes=1024 * 1024 * 10,
+    backupCount=2
+    )
+handler.setLevel(app.config['LOGGING_LEVEL'])
+formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
+handler.setFormatter(formatter)
+app.logger.addHandler(handler)
 
 @app.errorhandler(404)
 def not_found(error):

@@ -6,6 +6,7 @@ from task import start_command_task, emit_message
 from OpenForm import *
 from flask_restful import Resource
 from app import api
+from app import app
 
 report = Blueprint('report', __name__, url_prefix='/report')
 
@@ -29,6 +30,7 @@ def show():
         report_object = open(full_report_path)
         content = report_object.read()
     except IOError as e:
+        app.logger.error(e)
         return render_template('report/output.html', result = e)
     finally:
         if report_object is not None:
@@ -49,12 +51,13 @@ def show_log(log):
 def run():
     form = RunForm()
     if form.validate_on_submit():
-        app = form.app.data
+        app_name = form.app.data
         script_path = current_app.config['PPE_SCRIPT_PATH']
-        result = run_test(script_path, app)
+        result = run_test(script_path, app_name)
     else:
         result = form.app.errors
     emit_message(result)
+    app.logger.debug(result)
     return render_template('report/output.html', result = result)
 
 @report.route('/open/', methods=['POST'])
@@ -70,6 +73,7 @@ def open_report():
             result = "can not find %s" % (full_report_path)
     else:
         result = form.path.errors
+    app.logger.debug(result)
     return render_template('report/output.html', result = result)
 
 def step((ext, file_list), dirname, names):
@@ -104,6 +108,7 @@ class RunTest(Resource):
     def post(self, app_name):
         script_path = current_app.config['PPE_SCRIPT_PATH']
         result = run_test(script_path, app_name)
+        app.logger.debug(result)
         return {'status': result}, 201
 
 api.add_resource(RunTest, '/report/run/<string:app_name>')
