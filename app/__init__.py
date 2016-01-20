@@ -2,16 +2,18 @@ from flask import Flask, render_template
 from flask.ext.bootstrap import Bootstrap
 import eventlet
 from flask.ext.socketio import SocketIO
+from flask_restful import Api
 
 eventlet.monkey_patch()
 
 app = Flask(__name__)
-
 app.config.from_object('config.default')
 app.config.from_pyfile('instance/config.py')
 #app.config.from_envvar('APP_CONFIG_FILE')
+
 bootstrap = Bootstrap(app)
 socketio = SocketIO(app)
+api = Api(app)
 
 @app.errorhandler(404)
 def not_found(error):

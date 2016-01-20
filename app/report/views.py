@@ -4,6 +4,8 @@ import os
 from RunForm import *
 from task import start_command_task, emit_message
 from OpenForm import *
+from flask_restful import Resource
+from app import api
 
 report = Blueprint('report', __name__, url_prefix='/report')
 
@@ -21,10 +23,7 @@ def index():
 def show():
     report_dir = current_app.config['PPE_REPORT_PATH']
     report = request.args.get('name', '')
-    if report.startswith(os.sep):
-        full_report_path = report_dir + report
-    else:
-        full_report_path = os.path.join(report_dir, report)
+    full_report_path = get_full_report_path(report_dir, report)
     report_object = None
     try:
         report_object = open(full_report_path)
@@ -52,11 +51,7 @@ def run():
     if form.validate_on_submit():
         app = form.app.data
         script_path = current_app.config['PPE_SCRIPT_PATH']
-        if os.path.isfile(script_path):
-            start_command_task([ "python", "-u", script_path, app ])
-            result = 'Process Started'
-        else:
-            result = "no file of %s" % (script_path)
+        result = run_test(script_path, app)
     else:
         result = form.app.errors
     emit_message(result)
@@ -68,10 +63,7 @@ def open_report():
     if form.validate_on_submit():
         path = form.path.data
         report_dir = current_app.config['PPE_REPORT_PATH']
-        if path.startswith(os.sep):
-            full_report_path = report_dir + path
-        else:
-            full_report_path = os.path.join(report_dir, path)
+        full_report_path = get_full_report_path(report_dir, report)
         if os.path.isfile(full_report_path):
             return redirect(url_for('report.show', name = path))
         else:
@@ -91,6 +83,30 @@ def get_file_list_by_ext(top_dir, ext):
     os.path.walk(top_dir, step, (ext, file_list))
     result_list = list(set(map(lambda x: x[len(top_dir):], file_list)))
     return result_list
+
+def get_full_report_path(report_dir, report):
+    if report.startswith(os.sep):
+        full_report_path = report_dir + report
+    else:
+        full_report_path = os.path.join(report_dir, report)
+    return full_report_path
+
+def run_test(script_path, app_name):
+    if os.path.isfile(script_path):
+        start_command_task([ "python", "-u", script_path, app_name ])
+        result = 'Process Started'
+    else:
+        result = "no file of %s" % (script_path)
+    return result
+
+#curl -X POST http://0.0.0.0:5050/report/run/aaa
+class RunTest(Resource):
+    def post(self, app_name):
+        script_path = current_app.config['PPE_SCRIPT_PATH']
+        result = run_test(script_path, app_name)
+        return {'status': result}, 201
+
+api.add_resource(RunTest, '/report/run/<string:app_name>')
 
 @report.route('/start/')
 def start():
