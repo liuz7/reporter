@@ -22,8 +22,8 @@ def index():
 @report.route('/show/')
 def show():
     report_dir = current_app.config['PPE_REPORT_PATH']
-    report = request.args.get('name', '')
-    full_report_path = get_full_report_path(report_dir, report)
+    report_path = request.args.get('name', '')
+    full_report_path = get_full_report_path(report_dir, report_path)
     report_object = None
     try:
         report_object = open(full_report_path)
@@ -63,11 +63,11 @@ def run():
 def open_report():
     form = OpenForm()
     if form.validate_on_submit():
-        path = form.path.data
+        report_path = form.path.data
         report_dir = current_app.config['PPE_REPORT_PATH']
-        full_report_path = get_full_report_path(report_dir, report)
+        full_report_path = get_full_report_path(report_dir, report_path)
         if os.path.isfile(full_report_path):
-            return redirect(url_for('report.show', name = path))
+            return redirect(url_for('report.show', name = report_path))
         else:
             result = "can not find %s" % (full_report_path)
     else:
@@ -87,11 +87,11 @@ def get_file_list_by_ext(top_dir, ext):
     result_list = list(set(map(lambda x: x[len(top_dir):], file_list)))
     return result_list
 
-def get_full_report_path(report_dir, report):
-    if report.startswith(os.sep):
-        full_report_path = report_dir + report
+def get_full_report_path(report_dir, report_path):
+    if report_path.startswith(os.sep):
+        full_report_path = report_dir + report_path
     else:
-        full_report_path = os.path.join(report_dir, report)
+        full_report_path = os.path.join(report_dir, report_path)
     return full_report_path
 
 def run_test(script_path, app_name):

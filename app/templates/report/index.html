@@ -61,7 +61,7 @@
                     <label class="sr-only" for="path">Open report on the server</label>
                     <div class="input-group"><span class="input-group-addon">Open Report</span>
                         {{ open_form.hidden_tag() }}
-                        {{ open_form.path(size=50, class_="form-control", placeholder="The report path '/report-arts-it-index-tests/report.html'") }}
+                        {{ open_form.path(size=50, id='open_report', class_="form-control", placeholder="The report path '/report-arts-it-index-tests/report.html'") }}
                     </div>
                 </div>
                 <button type="submit" class="btn btn-default">Open</button>
@@ -83,10 +83,10 @@
                                 {% else %}
                                     <li class="list-group-item list-group-item-success">{{ report }}</li>
                                 {% endif %}
-                                <a class="btn btn-default btn-link"
+                                <a id="link" class="btn btn-default btn-link"
                                    href="{{ url_for('report.show', name=report + '/report.html') }}"
                                    role="button">Report</a>
-                                <a class="btn btn-default btn-link"
+                                <a id="link" class="btn btn-default btn-link"
                                    href="{{ url_for('report.show', name=report + '/log.html') }}"
                                    role="button">Log</a>
                                 </li>
@@ -109,7 +109,8 @@
                                 {% else %}
                                     <li class="list-group-item list-group-item-success">{{ debug }}</li>
                                 {% endif %}
-                                <a class="btn btn-default btn-link" href="{{ url_for('report.show', name=debug) }}"
+                                <a id="link" class="btn btn-default btn-link"
+                                   href="{{ url_for('report.show', name=debug) }}"
                                    role="button">Debug</a>
                                 </li>
                             </div>
@@ -120,4 +121,12 @@
         </div>
     </div>
 
+    <script>
+        $(".searchable a").hover(
+                function () {
+                    var report_url = decodeURIComponent($(this).attr('href'))
+                    $('#open_report').val(report_url.split('=')[1])
+                }
+        );
+    </script>
 {% endblock %}
