@@ -5,8 +5,7 @@ from RunForm import *
 from task import start_command_task, emit_message
 from OpenForm import *
 from flask_restful import Resource
-from app import api
-from app import app
+from app import api, app, app_list
 
 report = Blueprint('report', __name__, url_prefix='/report')
 
@@ -107,7 +106,10 @@ def run_test(script_path, app_name):
 class RunTest(Resource):
     def post(self, app_name):
         script_path = current_app.config['PPE_SCRIPT_PATH']
-        result = run_test(script_path, app_name)
+        if app_name in app_list:
+            result = run_test(script_path, app_name)
+        else:
+            result = app_name + ' is not in valid app list.'
         app.logger.debug(result)
         return {'status': result}, 201
 

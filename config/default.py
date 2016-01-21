@@ -8,3 +8,4 @@ LOGGING_LOCATION = 'log/reporter.log'
 LOGGING_LEVEL = logging.INFO
 PPE_REPORT_PATH = "/usr/local/nagios/etc/scripts/robot_check_report"
 PPE_SCRIPT_PATH = "/usr/local/nagios/etc/scripts/search-it-automation/Library/script/ppe_run.py"
+APP_LIST = ["shop","distshop","tuangou","tuangoux","shopwx","tuangourec","suggest","takeaway","wedding","suggestshop","tohome","shopgeneral","ads","shopad"]

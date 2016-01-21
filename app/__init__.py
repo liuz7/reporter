@@ -29,6 +29,8 @@ formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
 handler.setFormatter(formatter)
 app.logger.addHandler(handler)
 
+app_list = app.config['APP_LIST']
+
 @app.errorhandler(404)
 def not_found(error):
     return render_template('404.html'), 404

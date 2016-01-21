@@ -8,3 +8,4 @@ LOGGING_LOCATION = 'log/reporter.log'
 LOGGING_LEVEL = logging.DEBUG
 PPE_REPORT_PATH = "/Users/liugeorge/workspace/temp/search-it-automation/report"
 PPE_SCRIPT_PATH = "/Users/liugeorge/workspace/temp/search-it-automation/Library/script/ppe_run.py"
+APP_LIST = ["shop","distshop","tuangou","tuangoux","shopwx","tuangourec","suggest","takeaway","wedding","suggestshop","tohome","shopgeneral","ads","shopad"]
