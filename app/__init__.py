@@ -30,6 +30,8 @@ handler.setFormatter(formatter)
 app.logger.addHandler(handler)
 
 app_list = app.config['APP_LIST']
+report_dir = app.config['PPE_REPORT_PATH']
+script_path = app.config['PPE_SCRIPT_PATH']
 
 @app.errorhandler(404)
 def not_found(error):

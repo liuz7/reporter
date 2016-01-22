@@ -1,11 +1,11 @@
 #coding:utf-8
-from flask import Blueprint, render_template, current_app, request, make_response, redirect, abort, url_for
+from flask import Blueprint, render_template, request, make_response, redirect, abort, url_for
 import os
 from RunForm import *
-from task import start_command_task, emit_message
 from OpenForm import *
+from task import start_command_task, emit_message
 from flask_restful import Resource
-from app import api, app, app_list
+from app import api, app, app_list, report_dir, script_path
 
 report = Blueprint('report', __name__, url_prefix='/report')
 
@@ -13,7 +13,6 @@ report = Blueprint('report', __name__, url_prefix='/report')
 def index():
     run_form = RunForm()
     open_form = OpenForm()
-    report_dir = current_app.config['PPE_REPORT_PATH']
     html_report_list = get_file_list_by_ext(report_dir, '.html')
     report_list = list(set(map(lambda x: os.path.dirname(x), html_report_list)))
     debug_report_list = get_file_list_by_ext(report_dir, '.debug')
@@ -21,7 +20,6 @@ def index():
 
 @report.route('/show/')
 def show():
-    report_dir = current_app.config['PPE_REPORT_PATH']
     report_path = request.args.get('name', '')
     full_report_path = get_full_report_path(report_dir, report_path)
     report_object = None
@@ -51,7 +49,6 @@ def run():
     form = RunForm()
     if form.validate_on_submit():
         app_name = form.app.data
-        script_path = current_app.config['PPE_SCRIPT_PATH']
         result = run_test(script_path, app_name)
     else:
         result = form.app.errors
@@ -64,7 +61,6 @@ def open_report():
     form = OpenForm()
     if form.validate_on_submit():
         report_path = form.path.data
-        report_dir = current_app.config['PPE_REPORT_PATH']
         full_report_path = get_full_report_path(report_dir, report_path)
         if os.path.isfile(full_report_path):
             return redirect(url_for('report.show', name = report_path))
@@ -105,7 +101,6 @@ def run_test(script_path, app_name):
 #curl -X POST http://0.0.0.0:5050/report/run/aaa
 class RunTest(Resource):
     def post(self, app_name):
-        script_path = current_app.config['PPE_SCRIPT_PATH']
         if app_name in app_list:
             result = run_test(script_path, app_name)
         else:

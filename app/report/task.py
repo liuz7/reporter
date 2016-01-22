@@ -1,8 +1,6 @@
 from threading import Thread
-import subprocess
-from app import socketio
-import time
-from app import app
+import subprocess, time
+from app import socketio, app
 
 def start_command_task(command):
     thread = Thread(target=execute_command, args=[command])
