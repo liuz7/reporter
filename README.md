@@ -1,9 +1,5 @@
-#The reporter system for ppe/online report viewing and trigger the ppe test from web.
+#The reporter system for online report viewing and trigger the test from web.
 
-##To get the project code
-```
-git clone git@code.dianpingoa.com:arts-repo/reporter.git
-```
 ##User manual
 ###Developement, Run, Deployment
 1. System Dependencies
@@ -33,4 +29,4 @@ git clone git@code.dianpingoa.com:arts-repo/reporter.git
     - Run `sudo supervisord`
     - Run `sudo supervisorctl start reporter`
     
-###If any issue, please contact zhiwen.liu@dianping.com
+###If any issue, please contact braveheart2004@163.com
